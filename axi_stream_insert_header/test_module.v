@@ -18,7 +18,6 @@ module test_module;
     reg                       valid_insert = 0;
     reg  [     DATA_WD-1 : 0] header_insert = 0;
     reg  [DATA_BYTE_WD-1 : 0] keep_insert = 0;
-    reg  [   BYTE_CNT_WD : 0] byte_insert_cnt = 0;
 
     // axi_stream_insert_header Outputs
     wire                      ready_in;
@@ -54,35 +53,40 @@ module test_module;
 
     initial begin
         //第一组
-        #(PERIOD)begin 
-        valid_insert = 1;
-        header_insert = $random(seed);
-        keep_insert = {$random(seed)} % 2 ? ({$random(seed)} % 2 ? 4'b0001 : 4'b0011) : ({$random(seed)} % 2 ? 4'b0111 : 4'b1111);
+        // 一直重复，直到valid_insert随机生成1时，才跳出。
+        while (!valid_insert) begin
+            #(PERIOD)
+            valid_insert = $random(seed) % 2;
+            header_insert = $random(seed);
+            keep_insert ={$random(seed)} % 2 ? ({$random(seed)} % 2 ? 4'b0001 : 4'b0011) : ({$random(seed)} % 2 ? 4'b0111 : 4'b1111);;
         end
-        #(PERIOD)begin
-        valid_insert = 0;
-        valid_in = 1;
-        data_in = $random(seed);
-        keep_in = 4'b1111;
+
+        // 一直重复，直到valid_in随机生成1时，才跳出。
+        while (!valid_in) begin
+            #(PERIOD)
+            valid_in = $random(seed) % 2;
+            data_in = $random(seed);
+            keep_in = 4'b1111;
         end
-        #(PERIOD)begin
-        data_in = $random(seed);
-        keep_in = 4'b1111;
-        end
-        #(PERIOD)begin
-        data_in = $random(seed);
-        keep_in = 4'b1111;
-        end
+
         #(PERIOD)begin
         data_in = $random(seed);
-        keep_in = 4'b1111;
         end
+        #(PERIOD)begin
+        data_in = $random(seed);
+        end
+        #(PERIOD)begin
+        data_in = $random(seed);
+        end
+        
         #(PERIOD)begin
         data_in = $random(seed);
         keep_in = {$random(seed)} % 2 ? ({$random(seed)} % 2 ? 4'b1111 : 4'b1110) : ({$random(seed)} % 2 ? 4'b1100 : 4'b1000);
         last_in = 1;
         end
         #(PERIOD)begin
+            valid_insert = 0;
+            valid_in = 0;
             data_in = 0;
             last_in = 0;
             header_insert = 0;
@@ -91,78 +95,121 @@ module test_module;
         #(PERIOD);
 
         //第二组
-        # (PERIOD)begin
-        keep_in = 0;
-        valid_insert = 1;
-        last_in = 0;
-        valid_in = 0;
-        header_insert = $random(seed);
-        keep_insert = {$random(seed)} % 2 ? ({$random(seed)} % 2 ? 4'b0001 : 4'b0011) : ({$random(seed)} % 2 ? 4'b0111 : 4'b1111);
-        end        
+
+        while (!valid_insert) begin
+            #(PERIOD)
+            valid_insert = $random(seed) % 2;
+            header_insert = $random(seed);
+            keep_insert = {$random(seed)} % 2 ? ({$random(seed)} % 2 ? 4'b0001 : 4'b0011) : ({$random(seed)} % 2 ? 4'b0111 : 4'b1111);
+        end
+
+        while (!valid_in) begin
+            #(PERIOD)
+            valid_in = $random(seed) % 2;
+            data_in = $random(seed);
+            keep_in = 4'b1111;
+        end
+
         #(PERIOD)begin
-        valid_insert = 0;
-        valid_in = 1;
         data_in = $random(seed);
-        keep_in = 4'b1111;
         end
         #(PERIOD)begin
         data_in = $random(seed);
-        keep_in = 4'b1111;
         end
         #(PERIOD)begin
         data_in = $random(seed);
-        keep_in = 4'b1111;
         end
-        #(PERIOD)begin
-        data_in = $random(seed);
-        keep_in = 4'b1111;
-        end
+        
         #(PERIOD)begin
         data_in = $random(seed);
         keep_in = {$random(seed)} % 2 ? ({$random(seed)} % 2 ? 4'b1111 : 4'b1110) : ({$random(seed)} % 2 ? 4'b1100 : 4'b1000);
         last_in = 1;
         end
         #(PERIOD)begin
+            valid_insert = 0;
+            valid_in = 0;
             data_in = 0;
             last_in = 0;
             header_insert = 0;
             keep_insert =0;
         end
         #(PERIOD);
-        //第三组
-        # (PERIOD)begin
 
-        keep_in = 0;
-        valid_insert = 1;
-        last_in = 0;
-        valid_in = 0;
-        header_insert = $random(seed);
-        keep_insert = {$random(seed)} % 2 ? ({$random(seed)} % 2 ? 4'b0001 : 4'b0011) : ({$random(seed)} % 2 ? 4'b0111 : 4'b1111);
-        end        
+        //第三组
+
+        while (!valid_insert) begin
+            #(PERIOD)
+            valid_insert = $random(seed) % 2;
+            header_insert = $random(seed);
+            keep_insert = {$random(seed)} % 2 ? ({$random(seed)} % 2 ? 4'b0001 : 4'b0011) : ({$random(seed)} % 2 ? 4'b0111 : 4'b1111);
+        end
+
+        while (!valid_in) begin
+            #(PERIOD)
+            valid_in = $random(seed) % 2;
+            data_in = $random(seed);
+            keep_in = 4'b1111;
+        end
+
         #(PERIOD)begin
-        valid_insert = 0;
-        valid_in = 1;
         data_in = $random(seed);
-        keep_in = 4'b1111;
         end
         #(PERIOD)begin
         data_in = $random(seed);
-        keep_in = 4'b1111;
         end
         #(PERIOD)begin
         data_in = $random(seed);
-        keep_in = 4'b1111;
         end
-        #(PERIOD)begin
-        data_in = $random(seed);
-        keep_in = 4'b1111;
-        end
+        
         #(PERIOD)begin
         data_in = $random(seed);
         keep_in = {$random(seed)} % 2 ? ({$random(seed)} % 2 ? 4'b1111 : 4'b1110) : ({$random(seed)} % 2 ? 4'b1100 : 4'b1000);
         last_in = 1;
         end
         #(PERIOD)begin
+            valid_insert = 0;
+            valid_in = 0;
+            data_in = 0;
+            last_in = 0;
+            header_insert = 0;
+            keep_insert =0;
+        end
+        #(PERIOD);
+        
+        //第四组
+
+        while (!valid_insert) begin
+            #(PERIOD)
+            valid_insert = $random(seed) % 2;
+            header_insert = $random(seed);
+            keep_insert = {$random(seed)} % 2 ? ({$random(seed)} % 2 ? 4'b0001 : 4'b0011) : ({$random(seed)} % 2 ? 4'b0111 : 4'b1111);
+        end
+
+        while (!valid_in) begin
+            #(PERIOD)
+            valid_in = $random(seed) % 2;
+            data_in = $random(seed);
+            keep_in = 4'b1111;
+        end
+
+        #(PERIOD)begin
+        data_in = $random(seed);
+        end
+        #(PERIOD)begin
+        data_in = $random(seed);
+        end
+        #(PERIOD)begin
+        data_in = $random(seed);
+        end
+        
+        #(PERIOD)begin
+        data_in = $random(seed);
+        keep_in = {$random(seed)} % 2 ? ({$random(seed)} % 2 ? 4'b1111 : 4'b1110) : ({$random(seed)} % 2 ? 4'b1100 : 4'b1000);
+        last_in = 1;
+        end
+        #(PERIOD)begin
+            valid_insert = 0;
+            valid_in = 0;
             data_in = 0;
             last_in = 0;
             header_insert = 0;
